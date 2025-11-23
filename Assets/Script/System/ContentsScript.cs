@@ -81,6 +81,8 @@ public class ContentsScript : MonoBehaviour
 
     public void LoadFyp(int count)
     {
+        // GameManager01.Instance.SetIsCanDialog(true);
+
         if (fyp == null)
             fyp = new List<ContentData>();
         else
@@ -119,15 +121,23 @@ public class ContentsScript : MonoBehaviour
     {
         // load all content
         // reset like
-        HUDManager.Instance.ResetTextureLike();
+        // HUDManager.Instance.ResetTextureLike();
+        HUDManager.Instance.likeSpriteRenderer.sprite = HUDManager.Instance.spriteLike;
         // prepare comment
+
         // prepare content text
         HUDManager.Instance.textContent.text = contentData.description;
+
+        // prepare dialog
+        if (GameManager01.Instance.GetIsCanDialog() && contentData.dialogue != null)
+        {   
+            StartCoroutine(HUDManager.Instance.StartAnimationTextDialogue(contentData.dialogue[Random.Range(0, contentData.dialogue.Count)]));
+        }
         // prepare audio
-        AudioManager audioManager = AudioManager.Instance;
-        audioManager.aS_content.Stop();
-        audioManager.SetClip(audioManager.aS_content, audioManager.audioClipsContent[contentData.id]);
-        audioManager.aS_content.Play();
+        // AudioManager audioManager = AudioManager.Instance;
+        // audioManager.aS_content.Stop();
+        // audioManager.SetClip(audioManager.aS_content, audioManager.audioClipsContent[contentData.id]);
+        // audioManager.aS_content.Play();
     }
 
 }

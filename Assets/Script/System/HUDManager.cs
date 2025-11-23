@@ -3,6 +3,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
+using System.Collections;
+using UnityEngine.Rendering;
 public class HUDManager : MonoBehaviour
 {
     // Aps content
@@ -15,29 +18,41 @@ public class HUDManager : MonoBehaviour
     public static HUDManager Instance;
 
     public Texture2D textureLike, textureLikeActive, textureAudio, textureAudioMute;
+    public Sprite spriteLike, spriteLikeActive;
+    public SpriteRenderer likeSpriteRenderer;
 
     bool isFullScreen = false;
 
-    [SerializeField] CanvasGroup CG_audio, CG_pause, CG_topBar, CG_bottomBar, CG_like;
-    [SerializeField] Animator animatorAudioMenu, animatorPauseMenu, animatorTopBottomBar;
+    [SerializeField] CanvasGroup CG_audio, CG_pause, CG_topBar, CG_bottomBar, CG_like, CG_bg;
+    [SerializeField] Animator animatorPauseMenu, animatorTextDialog;
+    public Animator animatorBgEnv, animatorAudioMenu;
     void Awake()
     {
         Instance = this;
     }
     void Start()
     {
-    
         isFullScreen = false;
     }
 
     void Update()
     {
-        PauseGameUI();
+
+    }
+
+    public void UpdateFillImage(Image fillImage, int newVal, int max = 8)
+    {
+        fillImage.fillAmount = (float)newVal / max;
     }
 
     public CanvasGroup GetCGLIke()
     {
         return CG_like;
+    }
+
+    public CanvasGroup GetCGBG()
+    {
+        return CG_bg;
     }
 
     public void ResetTextureLike()
@@ -60,26 +75,82 @@ public class HUDManager : MonoBehaviour
         else if (moodValue >= 20) mood = "Sad";
         else
             mood = "Broken";
-
-
         textMood.text = $"Mood : {mood}";
     }
 
+    public IEnumerator StartAnimationTextDialogue(string text, float targetDur = 1.2f, float delayInStart = 1.1f)
+    {
+        Debug.LogWarning(text);
+        GameManager01.Instance.SetIsCanDialog(false);
+
+        yield return new WaitForSeconds(delayInStart);
+
+        textDialogueUI.text = "";
+        AudioManager audioManager = AudioManager.Instance;
+        audioManager.PlayDialogAudio();
+
+        animatorTextDialog.Play("play", 0, 0); // audio
+
+        foreach (char c in text)
+        {
+            yield return new WaitForSeconds((targetDur / text.Length));
+            textDialogueUI.text += c;
+            // audioManager.SetPitchRand(audioManager.aS_dialogue);
+        }
+
+        // foreach (char c in text)
+        // {
+        //     yield return new WaitForSeconds((targetDur / text.Length) / 2);
+        //     audioManager.SetPitchRand(audioManager.aS_dialogue);
+        // }
+
+        audioManager.StopAudio(audioManager.aS_dialogue);
+
+        yield return new WaitForSeconds(1.5f);
+        GameManager01.Instance.SetIsCanDialog(true);
+    }
+
+    public void LoadSettingScene()
+    {
+        SceneManager.LoadSceneAsync("OptionUI", LoadSceneMode.Additive);
+    }
+
+    public void LoadControlScene()
+    {
+        SceneManager.LoadSceneAsync("Tutorial", LoadSceneMode.Additive);
+    }
 
     // lets make functionality for game
     public void PauseGameUI()
     {
-
+        AudioManager.Instance.aS_choose.Stop();
+        AudioManager.Instance.aS_choose.Play();
+        CG_pause.DOFade(1f, 0.3f).OnComplete(() =>
+        {
+            CG_pause.blocksRaycasts = true;
+            CG_pause.interactable = true;
+            Time.timeScale = 0;
+        });
     }
 
     public void UnPauseGameUI()
     {
+        AudioManager.Instance.aS_choose.Stop();
+        AudioManager.Instance.aS_choose.Play();
 
+        Time.timeScale = 1;
+        CG_pause.DOFade(0, 0.3f).OnComplete(() =>
+        {
+            CG_pause.blocksRaycasts = false;
+            CG_pause.interactable = false;
+        });
     }
 
     public void ChangeScreenUI()
     {
         isFullScreen = !isFullScreen;
+        AudioManager.Instance.aS_choose.Stop();
+        AudioManager.Instance.aS_choose.Play();
 
         if (isFullScreen == false) // ada item2
         {
@@ -112,16 +183,21 @@ public class HUDManager : MonoBehaviour
 
     public void ToggleMuteMusic()
     {
+        AudioManager.Instance.aS_choose.Stop();
+        AudioManager.Instance.aS_choose.Play();
+
         if (PlayerPrefs.GetInt("isMuteMusic", 0) == 0) // kalo mute
         {
             AudioManager.Instance.SetMute(AudioManager.Instance.aS_music);
             PlayerPrefs.SetInt("isMuteMusic", 1);
+            PlayerPrefs.Save();
             MuteMusicUI(true);
         }
         else // kalo bersuara
         {
             AudioManager.Instance.SetMute(AudioManager.Instance.aS_music, false);
             PlayerPrefs.SetInt("isMuteMusic", 0);
+            PlayerPrefs.Save();
             MuteMusicUI(false);
         }
     }
@@ -134,7 +210,8 @@ public class HUDManager : MonoBehaviour
 
     public void SnapUI()
     {
-
+        AudioManager.Instance.aS_camerasnap.Stop();
+        AudioManager.Instance.aS_camerasnap.Play();
     }
 
 }

@@ -239,10 +239,10 @@
       "likeEffect": 1
     },
     {
-      "id": 15,
+      "id": 15, 
       "description": "Foto gunung berkabut, suasananya damai dan misterius.",
       "effect_name": "mood",
-      "effect": 3,
+      "effect": 3, 
       "dialogue": [
         "Ini sih gila indahnya.",
         "Tenang banget liatnya."

@@ -4,7 +4,7 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
-    public AudioSource aS_music, aS_content, aS_camerasnap, aS_choose, aS_dialogue, aS_like, aS_notif, aS_send, aS_hover;
+    public AudioSource aS_music, aS_content, aS_camerasnap, aS_choose, aS_dialogue, aS_like, aS_notif, aS_send, aS_hover, aS_event;
 
     public List<AudioClip> audioClipsContent;
     void Start()

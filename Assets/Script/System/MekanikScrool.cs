@@ -14,6 +14,12 @@ public class MekanikScrool : MonoBehaviour
     ContentData CurrentCont;
 
     Vector3 initialPOS;
+    public static MekanikScrool Instance;
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -60,6 +66,7 @@ public class MekanikScrool : MonoBehaviour
         }
 
         isCanScrool = false;
+        HandManager.Instance.DoScrollAnimate();
 
         CurrentCont = ContentsScript.Instance.GetContentById(index + 1);
         ContentsScript.Instance.PrepareContentFeed(CurrentCont);
@@ -85,8 +92,9 @@ public class MekanikScrool : MonoBehaviour
             index++;
 
             isCanLikeFeed = true;
-            HUDManager.Instance.GetCGLIke().interactable = true;
-            HUDManager.Instance.GetCGLIke().blocksRaycasts = true;
+
+            // HUDManager.Instance.GetCGLIke().interactable = true;
+            // HUDManager.Instance.GetCGLIke().blocksRaycasts = true;
 
         });
 
@@ -97,11 +105,17 @@ public class MekanikScrool : MonoBehaviour
         if (!isCanLikeFeed) return;
 
         isCanLikeFeed = false;
+        AudioManager.Instance.aS_like.Stop();
+        AudioManager.Instance.aS_like.Play();
         // do effect
 
-        HUDManager.Instance.SetTextureLike();
-        HUDManager.Instance.GetCGLIke().interactable = false;
-        HUDManager.Instance.GetCGLIke().blocksRaycasts = false;
+        // HUDManager.Instance.SetTextureLike();
+        HUDManager.Instance.likeSpriteRenderer.sprite = HUDManager.Instance.spriteLikeActive;
+        GameManager01.Instance.SetMoodVal(1);
+        GameManager01.Instance.ShowTextPopup("mood+");
+
+        // HUDManager.Instance.GetCGLIke().interactable = false;
+        // HUDManager.Instance.GetCGLIke().blocksRaycasts = false;
     }
 
     IEnumerator SetIsCanScroolinSecond()

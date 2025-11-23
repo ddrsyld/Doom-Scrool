@@ -8,6 +8,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/OptionUI.unity
+    guid: cd9044a5264a12142b52497c6e014ec2
+  - enabled: 1
+    path: Assets/Scenes/Scrool_Toilet.unity
+    guid: a567419b2b0cf00429bc6919e1df6d23
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
